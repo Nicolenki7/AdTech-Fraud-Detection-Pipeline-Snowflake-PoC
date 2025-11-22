@@ -36,3 +36,15 @@ The entire process is structured around a "Filtering Funnel" to ensure cost effi
 ## 📁 Repository Structure
 
 The code is organized into sequential files to clearly illustrate the progression from SQL filtering to Python logic deployment.
+
+
+## ⚙️ How to Run This Project
+
+1.  **Setup:** Create a new Python/SQL Worksheet in your Snowflake environment.
+2.  **SQL Phase:** Execute the files in the `src/sql` directory sequentially (`1_setup.sql` through `3_filtering.sql`).
+3.  **Snowpark Phase:** Open a Python Worksheet, set the context (`FRAUD_DETECTION_DB.RAW_LOGS`), and execute the files in the `src/snowpark` directory (`4_feature_engineering.py` and `5_udf_deployment_action.py`).
+4.  **Verification:** The final table, `ACTIONABLE_ALERTS`, will contain the final classified IPs.
+
+---
+
+*This project was completed as a demonstration of technical proficiency in large-scale data analysis and deployment of custom logic on the Snowflake platform.*
