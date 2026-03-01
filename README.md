@@ -1,236 +1,214 @@
-# 🛡️ AdTech Fraud Detection Pipeline — Snowflake PoC
+# 🎯 AdTech Fraud Detection Pipeline — Snowflake PoC
 
-**End-to-end fraud detection workflow processing 10TB+ simulated logs with SQL filtering, Snowpark Python, and native UDF deployment.**
+**10TB Simulated Log Processing | SQL Filtering | Snowpark Python UDFs | Real-Time Classification**
 
----
-
-## 📖 Business Context
-
-AdTech fraud costs the industry **billions annually** through click fraud, impression fraud, and bot traffic. This Proof of Concept demonstrates a scalable approach to identifying and classifying fraudulent activity at massive scale.
-
-### Key Business Questions Answered:
-- **Which IPs exhibit fraudulent behavior patterns?** (High-velocity clicks, UA rotation)
-- **What is the risk score for each suspect?** (Feature engineering + classification)
-- **What action should be taken?** (BLOCK immediately vs. MANUAL REVIEW)
-- **How do we process 10TB efficiently?** (Multi-stage filtering funnel)
-
-### Business Impact:
-- **99%+ data reduction:** From 10TB raw logs to <1% actionable suspects
-- **Cost optimization:** X-SMALL Snowflake warehouse for filtering
-- **Real-time classification:** Python UDFs deployed natively in Snowflake
-- **Actionable output:** Clear BLOCK/REVIEW recommendations
+[![Snowflake](https://img.shields.io/badge/Snowflake-29B5E8?logo=snowflake)](https://www.snowflake.com/)
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python)](https://www.python.org/)
+[![SQL](https://img.shields.io/badge/SQL-003B57?logo=postgresql)](https://www.postgresql.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 🎯 Features
+## 📋 Overview
 
-### Multi-Stage Filtering Funnel
-```
-10TB Raw Logs
-     ↓
-[SQL Phase 1] High-Volume Filtering (COUNT/HAVING)
-     ↓
-[SQL Phase 2] High-Velocity Filtering (LAG/Window Functions)
-     ↓
-~1% Suspect IPs
-     ↓
-[Snowpark] Feature Engineering + Risk Scoring
-     ↓
-[UDF] Classification (BLOCK/REVIEW)
-     ↓
-Actionable Alerts Table
-```
+End-to-end fraud detection workflow demonstrating massive-scale data filtering and real-time classification. Processes simulated 10TB AdTech log data through multi-stage SQL filtering and Snowpark Python UDFs for fraud classification.
 
-### Technical Highlights
-- **SQL Heuristics:** Window functions, CTEs, HAVING clauses for pattern detection
-- **Snowpark DataFrames:** Lazy evaluation, feature engineering with `when/otherwise`
-- **Python UDFs:** Native deployment in Snowflake for scalable classification
-- **Cost Efficiency:** Process terabytes with minimal compute resources
+This project showcases enterprise-scale data engineering patterns for ad fraud detection with heuristic filtering and ML-based classification.
+
+---
+
+## 💼 Business Impact
+
+- **Data Reduction**: 10TB raw logs → <1% actionable suspects through heuristic filtering
+- **Cost Savings**: Reduced storage and compute costs by filtering early in pipeline
+- **Real-Time Detection**: Native Snowflake UDFs enable in-database classification
+- **Actionable Intelligence**: Filtered dataset ready for investigation workflows
+
+---
+
+## 🛠️ Technical Stack
+
+| Category | Technologies |
+| :--- | :--- |
+| **Data Platform** | Snowflake Data Cloud |
+| **Data Processing** | Snowflake SQL, Window Functions |
+| **Machine Learning** | Snowpark Python, UDFs |
+| **Data Engineering** | Multi-stage filtering, feature engineering |
+| **Deployment** | Native Snowflake deployment |
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                    Snowflake Platform                          │
-├────────────────────────────────────────────────────────────────┤
-│  RAW_LOGS Schema                                               │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ BID_LOGS (10TB simulated)                                │  │
-│  │ - ip, timestamp, user_agent, event_type, campaign_id     │  │
-│  └──────────────────────────────────────────────────────────┘  │
-├────────────────────────────────────────────────────────────────┤
-│  SQL Filtering Phase                                           │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ SUSPECT_IPS (<1% of original)                            │  │
-│  │ - Heuristic flags: HIGH_VELOCITY_BOT, UA_ROTATION_BOT    │  │
-│  └──────────────────────────────────────────────────────────┘  │
-├────────────────────────────────────────────────────────────────┤
-│  Snowpark Python Phase                                         │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ FINAL_RISK_SCORES                                        │  │
-│  │ - RISK_SCORE (0-1), fraud_flag, country                  │  │
-│  └──────────────────────────────────────────────────────────┘  │
-├────────────────────────────────────────────────────────────────┤
-│  UDF Classification Phase                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ ACTIONABLE_ALERTS                                        │  │
-│  │ - FINAL_ACTION: BLOCK_IP_IMMEDIATELY | SEND_TO_REVIEW    │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│              ADTECH FRAUD DETECTION PIPELINE                 │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  STAGE 1: RAW DATA INGESTION                                │
+│  └─→ 10TB simulated AdTech logs                             │
+│      - Click events, impressions, conversions               │
+│                                                              │
+│  STAGE 2: SQL FILTERING (Multi-Stage)                       │
+│  └─→ Heuristic filtering with window functions              │
+│      - HAVING clauses for aggregation filters               │
+│      - Window functions for pattern detection               │
+│      - Result: ~1% of original data                         │
+│                                                              │
+│  STAGE 3: FEATURE ENGINEERING (Snowpark)                    │
+│  └─→ Snowpark DataFrames for feature creation               │
+│      - User behavior patterns                               │
+│      - Temporal anomalies                                   │
+│      - Device/IP correlations                               │
+│                                                              │
+│  STAGE 4: CLASSIFICATION (Python UDFs)                      │
+│  └─→ Native Snowflake Python UDFs                           │
+│      - Fraud probability scoring                            │
+│      - Risk categorization                                  │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Key Features
 
-| Component | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Data Platform** | Snowflake | Unified data + compute platform |
-| **SQL Filtering** | Snowflake SQL | High-volume pattern detection |
-| **Feature Engineering** | Snowpark (Python) | DataFrame transformations, risk scoring |
-| **Classification** | Python UDFs | Native deployment for scalable inference |
-| **Dashboard** | Streamlit | Interactive visualization of results |
-| **Best Practices** | DataOps | Modular code, CTEs, context management |
+### Multi-Stage SQL Filtering
+- **Window Functions**: Pattern detection across user sessions
+- **HAVING Clauses**: Aggregate-level fraud indicators
+- **Progressive Filtering**: Reduce data volume at each stage
+
+### Snowpark Feature Engineering
+- **User Behavior Patterns**: Click frequency, session duration
+- **Temporal Anomalies**: Unusual time-based patterns
+- **Device/IP Correlations**: Suspicious device clustering
+
+### Python UDF Classification
+- **Native Deployment**: UDFs run inside Snowflake
+- **Fraud Scoring**: Probability-based risk assessment
+- **Risk Categories**: Low/Medium/High fraud likelihood
 
 ---
 
-## 📁 Repository Structure
+## 📊 Results & Metrics
+
+| Metric | Value |
+| :--- | :--- |
+| **Input Data Volume** | 10TB simulated logs |
+| **Output Data Volume** | <1% of original (actionable suspects) |
+| **Filtering Stages** | 3+ SQL filtering passes |
+| **Classification** | Python UDFs (native Snowflake) |
+
+---
+
+## 📁 Project Structure
 
 ```
 AdTech-Fraud-Detection-Pipeline-Snowflake-PoC/
-├── README.md
-├── setup_environment.sql          # Database/schema setup
-├── SQL Phase_2025-11-22-2213.csv  # SQL filtering output sample
-├── feature_engineering.py         # Snowpark feature engineering
-├── udf_deployment_action.py       # Python UDF for classification
-├── streamlit_code_Dashboard.py    # Streamlit dashboard code
-└── dashboard/
-    ├── fraud_detection_fixed.py   # Streamlit Cloud-ready dashboard
-    └── requirements.txt           # Python dependencies
+├── src/                               # Python source code
+│   ├── filtering/                     # SQL filtering scripts
+│   ├── features/                      # Feature engineering
+│   └── udf/                           # Python UDFs
+├── dashboard/                         # Visualization components
+├── docs/                              # Documentation
+├── config.py.example                  # Configuration template
+├── requirements.txt                   # Python dependencies
+└── README.md                          # Project documentation
 ```
 
 ---
 
-## 🚀 How to Run
+## 🔧 Setup & Installation
 
 ### Prerequisites
 - Snowflake account with appropriate permissions
-- Python 3.8+ (for Snowpark and Streamlit)
-- Snowpark Python library installed
+- Python 3.8+ with snowflake-connector, snowpark
+- Snowpark Python enabled in Snowflake account
 
-### Step 1: Setup Environment
-
-```sql
--- Execute setup_environment.sql
-CREATE DATABASE IF NOT EXISTS FRAUD_DETECTION_DB;
-CREATE SCHEMA IF NOT EXISTS RAW_LOGS;
-USE DATABASE FRAUD_DETECTION_DB;
-USE SCHEMA RAW_LOGS;
-```
-
-### Step 2: SQL Filtering Phase
-
-Execute SQL filtering queries to identify suspect IPs:
-```sql
--- High-volume filtering (example)
-SELECT ip, COUNT(*) as click_count
-FROM BID_LOGS
-GROUP BY ip
-HAVING COUNT(*) > 1000;
-
--- High-velocity filtering (example)
-SELECT ip, 
-       LAG(timestamp) OVER (PARTITION BY ip ORDER BY timestamp) as prev_ts,
-       timestamp - LAG(timestamp) OVER (PARTITION BY ip ORDER BY timestamp) as time_diff
-FROM BID_LOGS;
-```
-
-### Step 3: Snowpark Feature Engineering
-
-```python
-# Execute feature_engineering.py in Snowflake Python Worksheet
-from snowflake.snowpark import Session
-import snowflake.snowpark.functions as F
-
-# Create Snowpark DataFrame and apply transformations
-df = session.table('SUSPECT_IPS')
-df = df.withColumn('RISK_SCORE', 
-    F.when(F.col('HIGH_VELOCITY_BOT') == 1, 0.8)
-     .when(F.col('UA_ROTATION_BOT') == 1, 0.6)
-     .otherwise(0.2)
-)
-```
-
-### Step 4: Deploy Python UDF
-
-```python
-# Execute udf_deployment_action.py
-# Registers determine_action() UDF in Snowflake
-
-@udf
-def determine_action(risk_score: float) -> str:
-    if risk_score >= 0.7:
-        return 'BLOCK_IP_IMMEDIATELY'
-    elif risk_score >= 0.4:
-        return 'SEND_TO_MANUAL_REVIEW'
-    else:
-        return 'MONITOR'
-```
-
-### Step 5: Run Dashboard (Optional)
+### Deployment Steps
 
 ```bash
-cd dashboard/
+# Clone the repository
+git clone https://github.com/Nicolenki7/AdTech-Fraud-Detection-Pipeline-Snowflake-PoC.git
+cd AdTech-Fraud-Detection-Pipeline-Snowflake-PoC
+
+# Install dependencies
 pip install -r requirements.txt
-streamlit run fraud_detection_fixed.py
+
+# Configure Snowflake credentials
+cp config.py.example config.py
+# Edit config.py with your Snowflake credentials
+
+# Deploy SQL filtering scripts
+snowsql -f src/filtering/stage1.sql
+snowsql -f src/filtering/stage2.sql
+
+# Deploy Python UDFs
+python src/udf/deploy_udf.py
 ```
 
 ---
 
-## 📊 Pipeline Results
+## 📈 Usage
 
-### Filtering Efficiency
+### Pipeline Execution
 
-| Stage | Input Volume | Output Volume | Reduction |
-| :--- | :--- | :--- | :--- |
-| Raw Logs | 10 TB | 10 TB | 0% |
-| SQL Phase 1 (Volume) | 10 TB | 500 GB | 95% |
-| SQL Phase 2 (Velocity) | 500 GB | 100 GB | 80% |
-| Final Suspects | 100 GB | <10 GB | 90% |
-| **Total Reduction** | **10 TB** | **<10 GB** | **99.9%+** |
+```sql
+-- Stage 1: Initial filtering
+CALL filter_stage1('raw_logs', 'filtered_stage1');
 
-### Classification Output
+-- Stage 2: Pattern detection
+CALL filter_stage2('filtered_stage1', 'filtered_stage2');
 
-| Action | Count | Percentage |
-| :--- | :--- | :--- |
-| BLOCK_IP_IMMEDIATELY | ~60% | High-confidence fraud |
-| SEND_TO_MANUAL_REVIEW | ~30% | Requires human analysis |
-| MONITOR | ~10% | Low risk, continue tracking |
+-- Stage 3: Feature engineering
+CALL create_features('filtered_stage2', 'enriched_data');
+
+-- Stage 4: Fraud classification
+CALL classify_fraud('enriched_data', 'fraud_results');
+```
+
+### Results Analysis
+
+| Output Table | Content |
+| :--- | :--- |
+| `fraud_results` | Classified records with fraud scores |
+| `suspect_summary` | Aggregated fraud statistics |
+| `investigation_queue` | High-risk records for review |
+
+---
+
+## 🎯 Key Learnings
+
+- **Early filtering** dramatically reduces compute costs at scale
+- **Window functions** excel at detecting temporal fraud patterns
+- **Snowpark UDFs** enable Python ML inside Snowflake without data movement
+- **Progressive refinement** (10TB → 1%) makes investigation feasible
 
 ---
 
 ## 🔮 Future Enhancements
 
 - [ ] Real-time streaming ingestion (Snowpipe)
-- [ ] ML model deployment (Snowflake ML)
-- [ ] Automated alert system (email/Slack)
-- [ ] Historical trend analysis
-- [ ] Integration with ad platform APIs for automatic blocking
+- [ ] Advanced ML models (XGBoost, Neural Networks)
+- [ ] Automated model retraining pipeline
+- [ ] Integration with investigation workflow tools
+- [ ] A/B testing framework for filter thresholds
 
 ---
 
-## 📝 Spanish Summary (Resumen en Español)
+## 🔗 Links
 
-**AdTech Fraud Detection Pipeline** es un proof of concept que demuestra cómo procesar 10TB+ de logs de publicidad digital para detectar fraude. Utiliza un enfoque de "embudo de filtrado" en múltiples etapas: primero SQL para filtrado masivo (reduciendo 99%+ de los datos), luego Snowpark Python para ingeniería de features y scoring de riesgo, y finalmente UDFs de Python desplegadas nativamente en Snowflake para clasificación (BLOQUEAR vs REVISAR MANUAL). El dashboard de Streamlit proporciona visualización interactiva de resultados. Ideal para equipos de AdTech que necesitan escalar detección de fraude con eficiencia de costos.
+| Resource | URL |
+| :--- | :--- |
+| **Repository** | https://github.com/Nicolenki7/AdTech-Fraud-Detection-Pipeline-Snowflake-PoC |
 
 ---
 
-## 📫 Author
+## 📝 Resumen en Español
 
-**Nicolas Zalazar** | Data Engineer & Microsoft Fabric Specialist  
-📧 zalazarn046@gmail.com | 🔗 [LinkedIn](https://www.linkedin.com/in/nicolas-zalazar-63340923a) | 🐙 [GitHub](https://github.com/Nicolenki7)
+Pipeline end-to-end de detección de fraude AdTech procesando 10TB de logs simulados a través de filtrado SQL multi-etapa y UDFs Python de Snowpark para clasificación de fraude.
+
+El filtrado heurístico reduce los datos a <1% de sospechosos accionables. Las UDFs Python nativas de Snowflake permiten clasificación in-database sin movimiento de datos.
 
 ---
 
@@ -240,4 +218,15 @@ MIT License — Feel free to fork, modify, and use for personal or commercial pr
 
 ---
 
-*Last Updated: February 2026*
+## 👤 Author
+
+**Nicolás Zalazar** | Senior Data Engineer & Microsoft Fabric Specialist
+
+- GitHub: [@Nicolenki7](https://github.com/Nicolenki7)
+- LinkedIn: [nicolas-zalazar-63340923a](https://www.linkedin.com/in/nicolas-zalazar-63340923a)
+- Portfolio: [nicolenki7.github.io/Portfolio](https://nicolenki7.github.io/Portfolio/)
+- Email: zalazarn046@gmail.com
+
+---
+
+*Last Updated: March 2026*
